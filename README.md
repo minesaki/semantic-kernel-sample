@@ -12,7 +12,7 @@ This shows how to realize chat with history, function calling, and RAG.
 
 ### Create .env file
 
-Place .env file in the project root.
+Place .env file (contents are as follows) in the project root.
 ```
 OPENAI_API_KEY=<Your OpenAI API Key>
 ```
@@ -30,7 +30,7 @@ dotnet run
 git init
 dotnet new console --use-program-main
 dotnet new gitignore
-dotnet add package Microsoft.SemanticKernel
 dotnet add package DotNetEnv
+dotnet add package Microsoft.SemanticKernel
 dotnet add package Microsoft.SemanticKernel.Plugins.Memory --prerelease
 ```

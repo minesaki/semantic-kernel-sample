@@ -66,6 +66,7 @@ class Program
         string prompt;
 
         // Generate embedding (vector) data and store in memory
+        // (This dummy person info was generated with ChatGPT)
         var memory = await sk.ExecuteEmbedding(new Dictionary<string, string>
         {
             {"name", "My name is Satoshi Nakamura." },
