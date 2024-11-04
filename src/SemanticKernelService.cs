@@ -6,7 +6,7 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Memory;
-using Microsoft.SemanticKernel.Plugins.Memory;
+using static Lib;
 
 namespace semantic_kernel_sample;
 
@@ -48,10 +48,10 @@ class SemanticKernelService
     {
         ChatHistory.Clear();
         ChatHistory.AddSystemMessage("Answer based only on the information below: ");
-        var answers = memory.SearchAsync("ask", prompt, 3, 0.2d, true);
+        var answers = memory.SearchAsync("ask", prompt, limit: 3, minRelevanceScore: 0.2d, withEmbeddings: true);
         await foreach (var answer in answers)
         {
-            Console.WriteLine($"Using: {answer.Metadata.Text} ({answer.Relevance})");
+            WriteDebug($"  [Using] {answer.Metadata.Text} ({answer.Relevance})");
             ChatHistory.AddSystemMessage(answer.Metadata.Text);
         }
         return await Ask(prompt);
@@ -64,10 +64,8 @@ class SemanticKernelService
         var store = new VolatileMemoryStore();
         var embeddingGenerator = new OpenAITextEmbeddingGenerationService(EmbeddingModelId, OpenaiApiKey);
         var memory = new SemanticTextMemory(store, embeddingGenerator);
-        foreach (var item in dic)
-        {
-            await memory.SaveInformationAsync("ask", id: item.Key, text: item.Value);
-        }
+        await Parallel.ForEachAsync(dic, async (item, _)
+            => await memory.SaveInformationAsync("ask", id: item.Key, text: item.Value));
         return memory;
     }
 }
